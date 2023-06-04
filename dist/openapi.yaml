@@ -109,6 +109,89 @@ paths:
           description: user is not authorized
       security:
       - cookieAuth: []
+  /users/MyRecipes:
+    get:
+      tags:
+      - Users
+      summary: Return the recipes that were created by the user
+      description: Get an array of recipes that were created by a specific user 
+      responses:
+        "200":
+          description: data about the user's created recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  # $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: user is not authorized
+      security:
+      - cookieAuth: []
+    post:
+      tags:
+      - Users
+      summary: save recipes that were created by the user
+      description: save a new recipe in the my_recipe DB, where all the users created recipes are stored
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reciepeTytle:
+                  type: string
+                  description: reciepe's title which the user created
+                  example: Shnitzel
+      responses:
+        "201":
+          description: The Recipe successfully created and saved to the DB. Will be shown on the my recipes page
+        "401":
+          description: user is not authorized
+        "406":
+          description: user posted the same recipe twice
+      security:
+      - cookieAuth: []
+  /users/FamilyRecipes:
+    get:
+      tags:
+      - Users
+      summary: Return the recipes are related to the logged in users family
+      description: Get an array of recipes that we created in advance and showcases our families top recipes
+      responses:
+        "200":
+          description: data about the user's family recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  # $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: user is not authorized
+      security:
+      - cookieAuth: []
+  /users/LastSeenRecipes:
+    get:
+      tags:
+      - Users
+      summary: Return the recipes that were last seen by the user
+      description: Get an array of maximum 3 recipes that the user opened their page. if there were none, it will show a relevant message. 
+      responses:
+        "200":
+          description: data about the user's created recipes returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  # $ref: '#/components/schemas/RecipePreview'
+        "401":
+          description: user is not authorized
+        "409":
+          description: There are no last seen recipes
+      security:
+      - cookieAuth: []
   /recipes/{recipeId}:
     get:
       tags:
@@ -133,6 +216,30 @@ paths:
                 $ref: '#/components/schemas/RecipePreview'
         "404":
           description: recipeId is not exists
+  /recipes/search_query:
+    get:
+      tags:
+      - Recipes
+      summary: Return search results made by the user of different recipes regarding to it's query
+      description: Return list of 5, 10 or 15 results for the user's query, where 5 is the default
+      responses:
+        "200":
+          description: search query returned successfuly
+          content:
+        "402":
+          description: daily limit exceeded
+  /recipes/random:
+    get:
+      tags:
+      - Recipes
+      summary: Generating random recipes
+      description: Return a list of 3 random recipes coming from the external API
+      responses:
+        "200":
+          description: random returned successfuly
+          content:
+        "404":
+          description: there were no recipes found
 components:
   schemas:
     User:
